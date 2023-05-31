@@ -44,18 +44,28 @@ class GdgListFragment : Fragment() {
         // Sets the adapter of the RecyclerView
         binding.gdgChapterList.adapter = adapter
 
-        viewModel.showNeedLocation.observe(viewLifecycleOwner, object: Observer<Boolean> {
-            override fun onChanged(show: Boolean?) {
-                // Snackbar is like Toast but it lets us show forever
-                if (show == true) {
-                    Snackbar.make(
-                        binding.root,
-                        "No location. Enable location in settings (hint: test with Maps) then check app permissions!",
-                        Snackbar.LENGTH_LONG
-                    ).show()
-                }
+//        viewModel.showNeedLocation.observe(viewLifecycleOwner, object: Observer<Boolean> {
+//            override fun onChanged(show: Boolean?) {
+//                // Snackbar is like Toast but it lets us show forever
+//                if (show == true) {
+//                    Snackbar.make(
+//                        binding.root,
+//                        "No location. Enable location in settings (hint: test with Maps) then check app permissions!",
+//                        Snackbar.LENGTH_LONG
+//                    ).show()
+//                }
+//            }
+//        })
+
+        viewModel.showNeedLocation.observe(viewLifecycleOwner) { show ->
+            if (show == true) {
+                Snackbar.make(
+                    binding.root,
+                    "No location. Enable location in settings (hint: test with Maps) then check app permissions!",
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
-        })
+        }
 
         setHasOptionsMenu(true)
         return binding.root
@@ -110,8 +120,8 @@ class GdgListFragment : Fragment() {
 
         val request = LocationRequest().setPriority(LocationRequest.PRIORITY_LOW_POWER)
         val callback = object: LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
-                val location = locationResult?.lastLocation ?: return
+            override fun onLocationResult(locationResult: LocationResult) {
+                val location = locationResult.lastLocation ?: return
                 viewModel.onLocationUpdated(location)
             }
         }
